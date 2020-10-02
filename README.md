@@ -1,3 +1,6 @@
+# Python Cookbook
+Below I list common Python code snippits. This cookbook is neither comprehensive nor guarenteed to be 100% accurate.
+
 # Built-in data structures
 A quick primer on built-ins is presented.
 
@@ -96,6 +99,8 @@ print(a)
     1
     {1: 'Hello', 3: 'world'}
     
+
+Many data types have common functions that you can call. We list some of them below.
 
 
 ```python
@@ -508,7 +513,14 @@ inst.g()
     Child function
     
 
+This is the end of the cookbook.
+
 
 ```python
-
+print(':)')
 ```
+
+    :)
+    
+
+~ Freeman
