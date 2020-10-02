@@ -347,6 +347,141 @@ json.load(fp)
 >>> [1, 2, 3]
 ```
 
+# Decorators
+Decorators are basically shortcuts for function wrappers. Consider the function below.
+
+
+```python
+def do_something():
+    print('This is something, apparently')
+def wrapper(func):
+    def changed_func():
+        print('Do something before')
+        func()
+        print('Do something after')
+    return changed_func
+do_something = wrapper(do_something)
+do_something()
+```
+
+    Do something before
+    This is something, apparently
+    Do something after
+    
+
+
+```python
+# We do it again, but with a decorator
+@wrapper
+def do_another_thing():
+    print('Ok, bruh')
+do_another_thing()
+```
+
+    Do something before
+    Ok, bruh
+    Do something after
+    
+
+Ok, great. However, let's call help() on our function.
+
+
+```python
+help(do_another_thing)
+```
+
+    Help on function changed_func in module __main__:
+    
+    changed_func()
+    
+    
+
+This is clearly not ideal. We can fix this by doing...
+
+
+```python
+from functools import wraps
+
+def wrapper(func):
+    @wraps(func)
+    def changed_func():
+        print('Do something before')
+        func()
+        print('Do something after')
+    return changed_func
+@wrapper
+def just_do_it():
+    print('Ok, bruh')
+
+print(just_do_it.__name__)
+```
+
+    just_do_it
+    
+
+### A More Sophisticated Example
+We present a more realistic and sophisticated example. Notice that the any() function in Python can take in arguments and iterables. We will create a decorator that makes our functions able to do so as well.
+
+
+```python
+def f(*args):
+    print(args[0])
+f(1, 2)
+f([1, 2]) # The output of this is not ideal
+f([1, 2], 3) # The output of this is ideal
+```
+
+    1
+    [1, 2]
+    [1, 2]
+    
+
+
+```python
+from collections.abc import Iterable
+def overloading(func):
+    @wraps(func)
+    def wrapper(*args):
+        if isinstance(args, Iterable) and len(args) == 1:
+            func(*args[0])
+        else:
+            func(*args)
+    return wrapper
+@overloading
+def f(*args):
+    print(args[0])
+f(1, 2)
+f([1, 2]) # Nice!
+f([1, 2], 3)
+```
+
+    1
+    1
+    [1, 2]
+    
+
+# Regular Expressions
+Common use cases are listed below.
+
+
+```python
+A = '6478888888'
+B = '647-888-8888'
+C = '+1-647-888-8888'
+import re
+res = re.search('(\D\d\D)?(\d{3})\D?(\d{3})\D?(\d{4})', A)
+print(res.groups())
+res = re.search('(\D\d\D)?(\d{3})\D?(\d{3})\D?(\d{4})', B)
+print(res.groups())
+res = re.search('(\D\d)?\D?(\d{3})\D?(\d{3})\D?(\d{4})', C)
+print(res.groups())
+```
+
+    (None, '647', '888', '8888')
+    (None, '647', '888', '8888')
+    ('+1', '647', '888', '8888')
+    
+
 # Error Handling
 Very important. Imagine you have a database connection, but some error causes program to stop. That connection still persists, eating away system resources. There are two types of errors.
 1. SyntaxError is raised upon parsing the code.
